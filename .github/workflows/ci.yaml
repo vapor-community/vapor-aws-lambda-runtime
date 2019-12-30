@@ -1,0 +1,57 @@
+name: CI
+on: 
+  push:
+    branches: 
+    - master
+  pull_request:
+    branches: 
+    - master
+
+jobs:
+  "tuxOS-Tests":
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: ['5.1']
+    container:
+      image: swift:${{ matrix.tag }}
+      volumes:
+      - $GITHUB_WORKSPACE:/src
+      options: --workdir /src
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Install dependencies
+      run: apt-get update && apt-get install -y zlib1g-dev zip openssl libssl-dev
+    - name: Test
+      run: swift test --enable-code-coverage --enable-test-discovery
+    - name: Convert coverage files
+      run: llvm-cov export -format="lcov" .build/debug/vapor-lambda-runtimePackageTests.xctest -instr-profile .build/debug/codecov/default.profdata > info.lcov
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v1.0.3
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+
+  "macOS-Tests":
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Show all Xcode versions
+      run: ls -an /Applications/ | grep Xcode*
+    - name: Change Xcode command line tools
+      run: sudo xcode-select -s /Applications/Xcode_11.2.app/Contents/Developer
+    - name: SPM Build
+      run: swift build
+    - name: SPM Tests
+      run: swift test --parallel -Xswiftc -DDEBUG
+    - name: Xcode Tests
+      run: |
+        swift package generate-xcodeproj
+        xcodebuild -quiet -parallel-testing-enabled YES -scheme vapor-lambda-runtime-Package -enableCodeCoverage YES build test
+    - name: Codecov
+      run: bash <(curl -s https://codecov.io/bash) -t ${{secrets.CODECOV_TOKEN}}
