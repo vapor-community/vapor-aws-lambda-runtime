@@ -21,7 +21,7 @@ public final class LambdaCommand: Command {
 
   private var signalSources: [DispatchSourceSignal]
   private var didShutdown: Bool
-  private var runtime: LambdaRuntime?
+  private var runtime: Runtime?
 
   /// Create a new `ServeCommand`.
   public init() {
@@ -50,7 +50,7 @@ public final class LambdaCommand: Command {
         .map { APIGateway.Response(response: $0) }
     }
     
-    let runtime = try LambdaRuntime.createRuntime(
+    let runtime = try Runtime.createRuntime(
       eventLoopGroup: context.application.eventLoopGroup,
       handler: handler)
     

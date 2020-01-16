@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/fabianfett/swift-lambda-runtime.git",
         "state": {
           "branch": null,
-          "revision": "65345c09b6f6ef5a523682fa52b02cd086ff1cef",
-          "version": "0.4.0"
+          "revision": "5b9b72b99097734a48761d991d67eee0a3f1906f",
+          "version": "0.5.0"
         }
       },
       {
