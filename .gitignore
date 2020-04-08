@@ -5,3 +5,4 @@ xcuserdata
 packaged.yaml
 examples/**/bootstrap
 examples/**/lambda.zip
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
