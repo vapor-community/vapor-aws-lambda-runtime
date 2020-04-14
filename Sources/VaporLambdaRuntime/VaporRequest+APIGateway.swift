@@ -5,8 +5,6 @@ import Vapor
 
 extension Vapor.Request {
   
-  public static let APIGatewayRequestKey = "Vapor.Request.VaporLambdaRuntime.APIGatewayRequest"
-  
   private static let bufferAllocator = ByteBufferAllocator()
   
   convenience init(req: APIGateway.Request, in ctx: Context, for application: Application) throws {
@@ -37,10 +35,13 @@ extension Vapor.Request {
       logger       : ctx.logger,
       on           : ctx.eventLoop)
     
-    self.userInfo[Vapor.Request.APIGatewayRequestKey] = req
+    self.storage[APIGateway.Request] = req
   }
 }
 
+extension APIGateway.Request: Vapor.StorageKey {
+    public typealias Value = APIGateway.Request
+}
 
 private extension HTTPMethod {
   
