@@ -10,11 +10,12 @@ on:
 jobs:
   "tuxOS-Tests":
     runs-on: ubuntu-latest
-    strategy:
       matrix:
-        tag: ['5.1']
+        images:
+        - swift:5.1
+        - swift:5.2
     container:
-      image: swift:${{ matrix.tag }}
+      image: ${{ matrix.images }}
       volumes:
       - $GITHUB_WORKSPACE:/src
       options: --workdir /src
@@ -44,7 +45,7 @@ jobs:
     - name: Show all Xcode versions
       run: ls -an /Applications/ | grep Xcode*
     - name: Change Xcode command line tools
-      run: sudo xcode-select -s /Applications/Xcode_11.2.app/Contents/Developer
+      run: sudo xcode-select -s /Applications/Xcode_11.4.app/Contents/Developer
     - name: SPM Build
       run: swift build
     - name: SPM Tests
