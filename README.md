@@ -1,7 +1,7 @@
 # vapor-lambda-runtime
 
 
-[![Swift 5.1](https://img.shields.io/badge/Swift-5.1-blue.svg)](https://swift.org/download/)
+[![Swift 5.2](https://img.shields.io/badge/Swift-5.2-blue.svg)](https://swift.org/download/)
 [![Vapor 4](https://img.shields.io/badge/Vapor-4-5AA9E7.svg)](/vapor/vapor)
 [![github-actions](https://github.com/fabianfett/vapor-lambda-runtime/workflows/CI/badge.svg)](https://github.com/fabianfett/vapor-lambda-runtime/actions)
 [![codecov](https://codecov.io/gh/fabianfett/vapor-lambda-runtime/branch/master/graph/badge.svg)](https://codecov.io/gh/fabianfett/vapor-lambda-runtime)
@@ -37,8 +37,8 @@ Add `vapor-lambda-runtime` and `vapor` as dependencies to your project. For this
 
 ```swift
   dependencies: [
-    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.3.1"),
-    .package(url: "https://github.com/fabianfett/vapor-lambda-runtime", .upToNextMajor(from: "0.1.0")),
+    .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
+    .package(url: "https://github.com/fabianfett/vapor-lambda-runtime", .upToNextMajor(from: "0.3.0")),
   ]
 ```
 
@@ -46,7 +46,10 @@ Add VaporLambdaRuntime as depency to your target:
 
 ```swift
   targets: [
-    .target(name: "Hello", dependencies: ["Vapor", "VaporLambdaRuntime"]),
+    .target(name: "Hello", dependencies: [
+      .product(name: "Vapor", package: "vapor"),
+      .product(name: "VaporLambdaRuntime", package: "vapor-lambda-runtime")
+    ]),
   ]
 ```
 
