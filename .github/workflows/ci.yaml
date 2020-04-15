@@ -10,13 +10,14 @@ on:
 jobs:
   "tuxOS-Tests":
     runs-on: ubuntu-latest
+    strategy:
       matrix:
         images:
         - swift:5.2
     container:
       image: ${{ matrix.images }}
       volumes:
-      - $GITHUB_WORKSPACE:/src
+      - /workspace:/src
       options: --workdir /src
     steps:
     - name: Checkout

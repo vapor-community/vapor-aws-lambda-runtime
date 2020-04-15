@@ -38,7 +38,7 @@ Add `vapor-lambda-runtime` and `vapor` as dependencies to your project. For this
 ```swift
   dependencies: [
     .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
-    .package(url: "https://github.com/fabianfett/vapor-lambda-runtime", .upToNextMajor(from: "0.1.0")),
+    .package(url: "https://github.com/fabianfett/vapor-lambda-runtime", .upToNextMajor(from: "0.3.0")),
   ]
 ```
 
@@ -47,8 +47,8 @@ Add VaporLambdaRuntime as depency to your target:
 ```swift
   targets: [
     .target(name: "Hello", dependencies: [
-    .product(name: "Vapor", package: "vapor"),
-    .product(name: "VaporLambdaRuntime", package: "vapor-lambda-runtime")
+      .product(name: "Vapor", package: "vapor"),
+      .product(name: "VaporLambdaRuntime", package: "vapor-lambda-runtime")
     ]),
   ]
 ```

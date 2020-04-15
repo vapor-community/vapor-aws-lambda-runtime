@@ -1,10 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Parameters:
-SwiftLayer:
-  Type: AWS::Serverless::LayerVersion
-  Description: The arn of the swift layer.
-  Default: arn:aws:lambda:eu-central-1:426836788079:layer:Swift:8
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -30,7 +25,7 @@ Resources:
       Handler: "haha"
       Runtime: provided
       Layers:
-      - arn:aws:lambda:eu-central-1:426836788079:layer:Swift:8
+      - arn:aws:lambda:eu-central-1:426836788079:layer:Swift:12
       Policies:
       - DynamoDBReadPolicy:
           TableName: "SwiftLambdaTodos"
