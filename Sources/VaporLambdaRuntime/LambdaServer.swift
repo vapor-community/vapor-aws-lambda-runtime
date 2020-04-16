@@ -1,5 +1,6 @@
 import Vapor
-import LambdaRuntime
+import AWSLambdaRuntime
+import AWSLambdaEvents
 
 // MARK: Application + Lambda
 
@@ -70,7 +71,6 @@ extension Application.Lambda {
     struct ConfigurationKey: StorageKey {
         typealias Value = LambdaServer.Configuration
     }
-
   }
 }
 
@@ -82,6 +82,7 @@ public class LambdaServer: Server {
     
     public enum RequestSource {
       case apiGateway
+      case apiGatewayV2
 //      case applicationLoadBalancer // not in this release
     }
     
@@ -93,15 +94,12 @@ public class LambdaServer: Server {
       self.logger        = logger
     }
   }
-
   
   private let application     : Application
   private let responder       : Responder
   private let configuration   : Configuration
-  private let eventLoopGroup  : EventLoopGroup
-  
-  private var runtime         : Runtime?
-  private var onShutdownFuture: EventLoopFuture<Void>?
+  private let eventLoop       : EventLoop
+  private var lambdaLifecycle : Lambda.Lifecycle
   
   init(application      : Application,
        responder        : Responder,
@@ -111,46 +109,46 @@ public class LambdaServer: Server {
     self.application    = application
     self.responder      = responder
     self.configuration  = configuration
-    self.eventLoopGroup = eventLoopGroup
+    
+    self.eventLoop      = eventLoopGroup.next()
+    
+    let handler: ByteBufferLambdaHandler
+    
+    switch configuration.requestSource {
+    case .apiGateway:
+      handler = APIGatewayHandler(application: application, responder: responder)
+    case .apiGatewayV2:
+      handler = APIGatewayV2Handler(application: application, responder: responder)
+    }
+    
+    self.lambdaLifecycle = Lambda.Lifecycle(
+      eventLoop: eventLoop,
+      logger: self.application.logger) {
+        $0.makeSucceededFuture(handler)
+    }
   }
   
   public func start(hostname: String?, port: Int?) throws {
-    
-    let handler = APIGateway.handler {
-      [unowned self] (req, ctx) -> EventLoopFuture<APIGateway.Response> in
-      
-      ctx.logger.info("API.GatewayRequest: \(req)")
-      
-      let vaporRequest: Vapor.Request
-      do {
-        vaporRequest = try Vapor.Request(req: req, in: ctx, for: self.application)
-      }
-      catch {
-        return ctx.eventLoop.makeFailedFuture(error)
-      }
-      
-      return self.responder.respond(to: vaporRequest)
-        .map { APIGateway.Response(response: $0) }
+    eventLoop.execute {
+      _ = self.lambdaLifecycle.start()
     }
     
-    self.runtime = try Runtime.createRuntime(eventLoopGroup: self.eventLoopGroup, handler: handler)
-    
-    self.onShutdownFuture = self.runtime!.start()
+    lambdaLifecycle.shutdownFuture.whenComplete { (_) in
+      DispatchQueue(label: "shutdown").async {
+        self.application.shutdown()
+      }
+    }
   }
   
   public var onShutdown: EventLoopFuture<Void> {
-    guard let future = self.onShutdownFuture else {
-      fatalError("Server has not started yet")
-    }
-    return future
+    return self.lambdaLifecycle.shutdownFuture.map { _ in }
   }
   
   public func shutdown() {
-    // this should never be executed
-    guard let runtime = self.runtime else {
-      return
-    }
-    try? runtime.syncShutdown()
+    // this should only be executed after someone has called `app.shutdown()`
+    // on lambda the ones calling should always be us!
+    // If we have called shutdown, the lambda server already is shutdown.
+    // That means, we have nothing to do here.
   }
-
 }
+

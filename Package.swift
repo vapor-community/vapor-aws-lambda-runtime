@@ -16,8 +16,8 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.13.0")),
+    .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", .upToNextMajor(from: "0.1.0")),
     .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
-    .package(url: "https://github.com/fabianfett/swift-lambda-runtime.git", .upToNextMajor(from: "0.6.0")),
     .package(url: "https://github.com/fabianfett/swift-base64-kit", .upToNextMajor(from: "0.2.0")),
   ],
   targets: [
@@ -25,11 +25,13 @@ let package = Package(
       name: "VaporLambdaRuntime",
       dependencies: [
         .product(name: "Vapor", package: "vapor"),
-        .product(name: "LambdaRuntime", package: "swift-lambda-runtime"),
+        .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
+        .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-runtime"),
         .product(name: "NIO", package: "swift-nio"),
         .product(name: "NIOHTTP1", package: "swift-nio"),
         .product(name: "Base64Kit", package: "swift-base64-kit"),
-    ]),
+      ]
+    ),
     .testTarget(
       name: "VaporLambdaRuntimeTests",
       dependencies: ["VaporLambdaRuntime"]),

@@ -1,8 +1,10 @@
 import Vapor
 import VaporLambdaRuntime
+#if DEBUG
+import AWSLambdaRuntimeCore
+#endif
 
 let app = Application()
-defer { app.shutdown() }
 
 struct Name: Codable {
   let name: String
@@ -21,6 +23,12 @@ app.post("hello") { req -> Hello in
   return Hello(hello: name.name)
 }
 
-app.commands.use(LambdaCommand(), as: "serve", isDefault: true)
-
-try app.run()
+//#if DEBUG
+//try Lambda.withLocalServer {
+  app.servers.use(.lambda)
+  try app.run()
+//}
+//#else
+//app.servers.use(.lambda)
+//try app.run()
+//#endif

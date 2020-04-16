@@ -1,6 +1,5 @@
 import Vapor
 import VaporLambdaRuntime
-import LambdaRuntime
 import NIOHTTP1
 import TodoService
 import AWSSDKSwiftCore
@@ -8,18 +7,13 @@ import AWSSDKSwiftCore
 LoggingSystem.bootstrap(StreamLogHandler.standardError)
 
 let app = Application()
-let env = try Environment()
 
 let baseUrlEnvironment = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:3000"
 let baseUrl = URL(string: baseUrlEnvironment)
 
 let store = DynamoTodoStore(
   eventLoopGroup:  app.eventLoopGroup,
-  tableName:       "SwiftLambdaTodos",
-  accessKeyId:     env.accessKeyId,
-  secretAccessKey: env.secretAccessKey,
-  sessionToken:    env.sessionToken,
-  region:          Region(rawValue: env.region)!)
+  tableName:       "SwiftLambdaTodos")
 
 extension TodoItem: Content {}
 

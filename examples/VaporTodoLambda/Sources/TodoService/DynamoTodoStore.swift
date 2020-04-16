@@ -10,17 +10,9 @@ public class DynamoTodoStore {
   
   public init(
     eventLoopGroup: EventLoopGroup,
-    tableName: String,
-    accessKeyId: String?,
-    secretAccessKey: String?,
-    sessionToken: String? = nil,
-    region: Region = .eucentral1)
+    tableName: String)
   {
     self.dynamo = DynamoDB(
-      accessKeyId: accessKeyId,
-      secretAccessKey: secretAccessKey,
-      sessionToken: sessionToken,
-      region: region,
       eventLoopGroupProvider: .shared(eventLoopGroup))
     self.tableName = tableName
   }

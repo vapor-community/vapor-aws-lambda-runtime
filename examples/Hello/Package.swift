@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,13 +6,19 @@ import PackageDescription
 let package = Package(
   name: "Hello",
   platforms: [
-    .macOS(.v10_14)
+    .macOS(.v10_15)
+  ],
+  products: [
+    .executable(name: "Hello", targets: ["Hello"])
   ],
   dependencies: [
-    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.3.1"),
-    .package(path: "../.."),
+    .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
+    .package(name: "vapor-lambda-runtime", path: "../.."),
   ],
   targets: [
-    .target(name: "Hello", dependencies: ["Vapor", "VaporLambdaRuntime"]),
+    .target(name: "Hello", dependencies: [
+      .product(name: "Vapor", package: "vapor"),
+      .product(name: "VaporLambdaRuntime", package: "vapor-lambda-runtime"),
+    ]),
   ]
 )
