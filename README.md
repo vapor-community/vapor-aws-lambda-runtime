@@ -83,7 +83,7 @@ app.post("hello") { req -> Hello in
 Next we just need to run the vapor app. To enable running in Lambda, we need to change the "serve" command. Then we can start the app by calling `app.run()`
 
 ```swift
-app.commands.use(LambdaCommand(), as: "serve", isDefault: true)
+app.servers.use(.lambda)
 
 try app.run()
 ```

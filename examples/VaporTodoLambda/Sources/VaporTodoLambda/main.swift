@@ -120,7 +120,7 @@ todos.delete(":todoId") { (req) -> EventLoopFuture<Response> in
     .map { _ in Response(status: .ok, body: .empty) }
 }
 
-app.commands.use(LambdaCommand(), as: "serve", isDefault: true)
+app.servers.use(.lambda)
 
 defer {
   app.shutdown()
