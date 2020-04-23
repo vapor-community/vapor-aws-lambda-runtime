@@ -6,10 +6,10 @@ import PackageDescription
 let package = Package(
   name: "Hello",
   platforms: [
-    .macOS(.v10_14)
+    .macOS(.v10_15)
   ],
   dependencies: [
-    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.3.1"),
+    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
     .package(path: "../.."),
   ],
   targets: [

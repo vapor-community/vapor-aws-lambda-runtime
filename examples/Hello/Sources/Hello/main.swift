@@ -21,6 +21,6 @@ app.post("hello") { req -> Hello in
   return Hello(hello: name.name)
 }
 
-app.commands.use(LambdaCommand(), as: "serve", isDefault: true)
+app.servers.use(.lambda)
 
 try app.run()
