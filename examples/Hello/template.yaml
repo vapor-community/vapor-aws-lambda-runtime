@@ -8,15 +8,8 @@ Globals:
 
 Resources:
       
-  APIGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: test
-      Cors:
-        AllowMethods: "'OPTIONS,GET,POST,DELETE,PATCH'"
-        AllowHeaders: "'Content-Type'"
-        AllowOrigin : "'*'"
-        AllowCredentials: "'*'"
+  HTTPAPIGateway:
+    Type: AWS::Serverless::HttpApi
 
   HelloAPIFunction:
     Type: AWS::Serverless::Function
@@ -26,9 +19,9 @@ Resources:
       Runtime: provided
       Events:
         Api:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref APIGateway
-            Path: "/{proxy+}"
-            Method: ANY
+            ApiId: !Ref HTTPAPIGateway
+            
+
 

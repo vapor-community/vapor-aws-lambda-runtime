@@ -14,6 +14,7 @@ jobs:
       matrix:
         images:
         - swift:5.2
+        - swift:5.2-amazonlinux2
     container:
       image: ${{ matrix.images }}
       volumes:
@@ -22,30 +23,45 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
-    - name: Install dependencies
-      run: apt-get update && apt-get install -y zlib1g-dev zip openssl libssl-dev
+    - name: Install dependencies 
+      if: matrix.images != 'swiftlang/swift:nightly-amazonlinux2'
+      run: apt-get update && apt-get install -y curl # required by the codecov action.
     - name: Test
       run: swift test --enable-code-coverage --enable-test-discovery
     - name: Convert coverage files
-      run: llvm-cov export -format="lcov" .build/debug/vapor-lambda-runtimePackageTests.xctest -instr-profile .build/debug/codecov/default.profdata > info.lcov
+      run: llvm-cov export -format="lcov" .build/debug/vapor-aws-lambda-runtimePackageTests.xctest -instr-profile .build/debug/codecov/default.profdata > info.lcov
     - name: Upload to codecov.io
       uses: codecov/codecov-action@v1.0.3
       with:
         token: ${{secrets.CODECOV_TOKEN}}
+
+  "example-Build":
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        examples:
+        - Hello
+        - VaporTodoLambda
+    container:
+      image: swift:5.2-amazonlinux2
+      volumes:
+      - /workspace:/src
+      options: --workdir /src/examples/${{ matrix.examples }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build
+      run: swift build -c release
 
   "macOS-Tests":
     runs-on: macOS-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
     - name: Show all Xcode versions
       run: ls -an /Applications/ | grep Xcode*
     - name: Change Xcode command line tools
-      run: sudo xcode-select -s /Applications/Xcode_11.4.app/Contents/Developer
+      run: sudo xcode-select -s /Applications/Xcode_11.5.app/Contents/Developer
     - name: SPM Build
       run: swift build
     - name: SPM Tests

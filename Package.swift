@@ -4,14 +4,14 @@
 import PackageDescription
 
 let package = Package(
-  name: "vapor-lambda-runtime",
+  name: "vapor-aws-lambda-runtime",
   platforms: [
     .macOS(.v10_15)
   ],
   products: [
     .library(
-      name: "VaporLambdaRuntime",
-      targets: ["VaporLambdaRuntime"]
+      name: "VaporAWSLambdaRuntime",
+      targets: ["VaporAWSLambdaRuntime"]
     ),
   ],
   dependencies: [
@@ -22,7 +22,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "VaporLambdaRuntime",
+      name: "VaporAWSLambdaRuntime",
       dependencies: [
         .product(name: "Vapor", package: "vapor"),
         .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
@@ -33,8 +33,12 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "VaporLambdaRuntimeTests",
-      dependencies: ["VaporLambdaRuntime"]),
+      name: "VaporAWSLambdaRuntimeTests",
+      dependencies: [
+        .byName(name:"VaporAWSLambdaRuntime"),
+        .product(name: "AWSLambdaTesting", package: "swift-aws-lambda-runtime"),
+      ]
+    ),
   ]
 )
 

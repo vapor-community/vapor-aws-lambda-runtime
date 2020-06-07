@@ -1,5 +1,5 @@
 import Vapor
-import VaporLambdaRuntime
+import VaporAWSLambdaRuntime
 #if DEBUG
 import AWSLambdaRuntimeCore
 #endif
