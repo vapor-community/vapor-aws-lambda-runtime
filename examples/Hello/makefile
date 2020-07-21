@@ -1,13 +1,9 @@
 EXECUTABLE=Hello
 LAMBDA_ZIP=lambda.zip
 
-SWIFT_DOCKER_IMAGE=swift-al2-builder
+SWIFT_DOCKER_IMAGE=swift-lambda-builder
 
-clean_lambda:
-	rm bootstrap || true
-	rm lambda.zip || true
-
-build_lambda: clean_lambda
+build_lambda:
 	docker run \
 			--rm \
 			--volume "$(shell pwd)/../..:/src" \

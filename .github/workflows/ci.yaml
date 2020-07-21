@@ -40,6 +40,8 @@ jobs:
       run: llvm-cov export -format="lcov" .build/debug/vapor-aws-lambda-runtimePackageTests.xctest -instr-profile .build/debug/codecov/default.profdata > info.lcov
     - name: Upload to codecov.io
       uses: codecov/codecov-action@v1
+      with:
+        file: info.lcov
 
   "example-Build":
     runs-on: ubuntu-latest
@@ -69,10 +71,6 @@ jobs:
       run: ls -an /Applications/ | grep Xcode*
     - name: Change Xcode command line tools
       run: sudo xcode-select -s /Applications/Xcode_11.5.app/Contents/Developer
-    - name: SPM Build
-      run: swift build
-    - name: SPM Tests
-      run: swift test --parallel -Xswiftc -DDEBUG
     - name: Xcode Tests
       run: |
         swift package generate-xcodeproj
