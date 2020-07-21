@@ -47,7 +47,6 @@ jobs:
       matrix:
         examples:
         - Hello
-        - VaporTodoLambda
     container:
       image: swift:5.2-amazonlinux2
     defaults:
