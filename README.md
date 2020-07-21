@@ -1,15 +1,13 @@
-# vapor-lambda-runtime
+# vapor-aws-lambda-runtime
 
 
 [![Swift 5.2](https://img.shields.io/badge/Swift-5.2-blue.svg)](https://swift.org/download/)
 [![Vapor 4](https://img.shields.io/badge/Vapor-4-5AA9E7.svg)](/vapor/vapor)
 [![github-actions](https://github.com/fabianfett/vapor-lambda-runtime/workflows/CI/badge.svg)](https://github.com/fabianfett/vapor-lambda-runtime/actions)
-[![codecov](https://codecov.io/gh/fabianfett/vapor-lambda-runtime/branch/master/graph/badge.svg)](https://codecov.io/gh/fabianfett/vapor-lambda-runtime)
+[![codecov](https://codecov.io/gh/fabianfett/vapor-lambda-runtime/branch/main/graph/badge.svg)](https://codecov.io/gh/fabianfett/vapor-lambda-runtime)
 
-Run your Vapor app on AWS Lambda. This package bridges the communication between [`swift-lambda-runtime`](https://github.com/fabianfett/swift-aws-lambda)
+Run your Vapor app on AWS Lambda. This package bridges the communication between [`swift-aws-lambda-runtime`](https://github.com/swift-server/swift-aws-lambda-runtime)
 and the [Vapor](https://github.com/vapor/vapor) framework. APIGateway requests are transformed into `Vapor.Request`s and `Vapor.Response`s are written back to the APIGateway. It intents to bring the funcionality of [`aws-lambda-go-api-proxy`](/awslabs/aws-lambda-go-api-proxy) to Vapor.
-
-This project is intended to be run using the [Swift Layer from the amazonlinux-swift project](https://fabianfett.de/amazonlinux-swift).
 
 ## Status
 
@@ -27,18 +25,17 @@ There are probably tons of other things that we should test. I haven't done much
 Examples:
 
 - [HelloWorld](examples/Hello/Sources/Hello/main.swift)
-- [Super simple TodoBackend](examples/VaporTodoLambda/Sources/VaporTodoLambda/main.swift) example with DynamoDB backend (terrible code) using aws-sdk-swift
 
 If you test anything, please open a PR so that we can document the state of affairs better. A super small example would be even better. I plan to create some integration tests with the examples.
 
 ## Usage
 
-Add `vapor-lambda-runtime` and `vapor` as dependencies to your project. For this open your `Package.swift`:
+Add `vapor-aws-lambda-runtime` and `vapor` as dependencies to your project. For this open your `Package.swift`:
 
 ```swift
   dependencies: [
     .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
-    .package(url: "https://github.com/fabianfett/vapor-lambda-runtime", .upToNextMajor(from: "0.3.0")),
+    .package(url: "https://github.com/fabianfett/vapor-aws-lambda-runtime", .upToNextMajor(from: "0.4.0")),
   ]
 ```
 
@@ -48,7 +45,7 @@ Add VaporLambdaRuntime as depency to your target:
   targets: [
     .target(name: "Hello", dependencies: [
       .product(name: "Vapor", package: "vapor"),
-      .product(name: "VaporLambdaRuntime", package: "vapor-lambda-runtime")
+      .product(name: "VaporAWSLambdaRuntime", package: "vapor-aws-lambda-runtime")
     ]),
   ]
 ```
@@ -57,10 +54,9 @@ Create a simple Vapor app.
 
 ```swift
 import Vapor
-import VaporLambdaRuntime
+import VaporAWSLambdaRuntime
 
 let app = Application()
-defer { app.shutdown() }
 
 struct Name: Codable {
   let name: String
@@ -70,8 +66,8 @@ struct Hello: Content {
   let hello: String
 }
 
-app.get("hello") { (req) -> Hello in
-  return Hello(hello: "world")
+app.get("hello") { (_) -> Hello in
+  Hello(hello: "world")
 }
 
 app.post("hello") { req -> Hello in
