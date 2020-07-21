@@ -17,7 +17,7 @@ What I have tested:
 
 - [x] Routing
 - [x] JSON Coding
-- [x] Cors Middleware
+- [ ] Cors Middleware
 - [ ] Fluent
 
 There are probably tons of other things that we should test. I haven't done much with Vapor so far. Therefore you will need to help me list the things to test.
@@ -86,7 +86,7 @@ try app.run()
 
 ## Contributing
 
-Please feel welcome and encouraged to contribute to vapor-lambda-runtime. The current version has a long way to go before being ready for production use and help is always welcome.
+Please feel welcome and encouraged to contribute to vapor-aws-lambda-runtime. The current version has a long way to go before being ready for production use and help is always welcome.
 
 If you've found a bug, have a suggestion or need help getting started, please open an Issue or a PR. If you use this package, I'd be grateful for sharing your experience.
 
