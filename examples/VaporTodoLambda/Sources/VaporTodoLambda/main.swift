@@ -1,5 +1,6 @@
 import Vapor
-import VaporLambdaRuntime
+import VaporAWSLambdaRuntime
+import AWSLambdaRuntime
 import NIOHTTP1
 import TodoService
 import AWSSDKSwiftCore
@@ -8,21 +9,25 @@ LoggingSystem.bootstrap(StreamLogHandler.standardError)
 
 let app = Application()
 
-let baseUrlEnvironment = ProcessInfo.processInfo.environment["BASE_URL"] ?? "http://localhost:3000"
+let baseUrlEnvironment = Lambda.env("BASE_URL") ?? "http://localhost:3000"
 let baseUrl = URL(string: baseUrlEnvironment)
 
 let store = DynamoTodoStore(
-  eventLoopGroup:  app.eventLoopGroup,
-  tableName:       "SwiftLambdaTodos")
+  eventLoopGroup: app.eventLoopGroup,
+  tableName:      Lambda.env("DYNAMODB_TABLE_NAME") ?? "SwiftLambdaTodos")
 
 extension TodoItem: Content {}
 
 let corsMiddleware = CORSMiddleware(configuration: .init(
   allowedOrigin: .all,
-  allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
+  allowedMethods: [.GET, .POST, .PUT, .DELETE, .PATCH],
   allowedHeaders: [.accept, .authorization, .contentType, .origin]))
 
-let todos = app.grouped("todos").grouped(corsMiddleware)
+let errorMiddleware = ErrorMiddleware.default(environment: app.environment)
+
+let todos = app.grouped("todos")
+  .grouped(corsMiddleware)
+  .grouped(errorMiddleware)
 
 extension EventLoopFuture where Value == TodoItem {
   

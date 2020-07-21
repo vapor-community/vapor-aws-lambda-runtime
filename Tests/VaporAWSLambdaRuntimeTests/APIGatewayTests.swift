@@ -1,5 +1,5 @@
 import XCTest
-import VaporLambdaRuntime
+import VaporAWSLambdaRuntime
 import AWSLambdaTesting
 import class Foundation.Bundle
 

@@ -7,33 +7,45 @@ Globals:
     Timeout: 3
 
 Resources:
-      
-  APIGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: test
-      Cors:
-        AllowMethods: "'OPTIONS,GET,POST,DELETE,PATCH'"
-        AllowHeaders: "'Content-Type'"
-        AllowOrigin : "'*'"
-        AllowCredentials: "'*'"
+
+  HTTPAPIGateway:
+    Type: AWS::Serverless::HttpApi
+#    Properties:
+#      CorsConfiguration:
+#        AllowCredentials: "'*'"
+#        AllowHeaders: "'Content-Type'"
+#        AllowMethods: "'OPTIONS,GET,POST,DELETE,PATCH'"
+#        AllowOrigins: "'*'"
 
   TodoAPIFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda.zip
+      CodeUri: .build/lambda/VaporTodoLambda/lambda.zip
       Handler: "haha"
       Runtime: provided
-      Layers:
-      - arn:aws:lambda:eu-central-1:426836788079:layer:Swift:12
       Policies:
-      - DynamoDBReadPolicy:
-          TableName: "SwiftLambdaTodos"
+      - DynamoDBCrudPolicy:
+          TableName: !Ref DynamoDBTable
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref DynamoDBTable
       Events:
         Api:
-          Type: Api
+          Type: HttpApi
           Properties:
-            RestApiId: !Ref APIGateway
-            Path: "/{proxy+}"
-            Method: ANY
-
+            ApiId: !Ref HTTPAPIGateway
+            
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: ListId
+        AttributeType: S
+      - AttributeName: TodoId
+        AttributeType: S
+      KeySchema:
+      - AttributeName: ListId
+        KeyType: HASH
+      - AttributeName: TodoId
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
