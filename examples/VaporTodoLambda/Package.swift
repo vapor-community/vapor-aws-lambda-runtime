@@ -4,26 +4,26 @@
 import PackageDescription
 
 let package = Package(
-  name: "VaporTodoLambda",
-  platforms: [
-    .macOS(.v10_15)
-  ],
-  products: [
-    .executable(name: "VaporTodoLambda", targets: ["VaporTodoLambda"])
-  ],
-  dependencies: [
-    .package(name: "vapor-aws-lambda-runtime", path: "../../"),
-    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.3.1"),
-    .package(name: "AWSSDKSwift", url: "https://github.com/swift-aws/aws-sdk-swift.git", .upToNextMajor(from: "4.4.0")),
-  ],
-  targets: [
-    .target(name: "TodoService", dependencies: [
-      .product(name: "DynamoDB", package: "AWSSDKSwift")
-    ]),
-    .target(name: "VaporTodoLambda", dependencies: [
-      .byName(name: "TodoService"),
-      .product(name: "Vapor", package: "vapor"),
-      .product(name: "VaporAWSLambdaRuntime", package: "vapor-aws-lambda-runtime")
-    ])
-  ]
+    name: "VaporTodoLambda",
+    platforms: [
+        .macOS(.v10_15),
+    ],
+    products: [
+        .executable(name: "VaporTodoLambda", targets: ["VaporTodoLambda"]),
+    ],
+    dependencies: [
+        .package(name: "vapor-aws-lambda-runtime", path: "../../"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta.3.1"),
+        .package(name: "AWSSDKSwift", url: "https://github.com/swift-aws/aws-sdk-swift.git", .upToNextMajor(from: "4.4.0")),
+    ],
+    targets: [
+        .target(name: "TodoService", dependencies: [
+            .product(name: "DynamoDB", package: "AWSSDKSwift"),
+        ]),
+        .target(name: "VaporTodoLambda", dependencies: [
+            .byName(name: "TodoService"),
+            .product(name: "Vapor", package: "vapor"),
+            .product(name: "VaporAWSLambdaRuntime", package: "vapor-aws-lambda-runtime"),
+        ]),
+    ]
 )

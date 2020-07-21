@@ -4,21 +4,21 @@
 import PackageDescription
 
 let package = Package(
-  name: "Hello",
-  platforms: [
-    .macOS(.v10_15)
-  ],
-  products: [
-    .executable(name: "Hello", targets: ["Hello"])
-  ],
-  dependencies: [
-    .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
-    .package(name: "vapor-aws-lambda-runtime", path: "../.."),
-  ],
-  targets: [
-    .target(name: "Hello", dependencies: [
-      .product(name: "Vapor", package: "vapor"),
-      .product(name: "VaporAWSLambdaRuntime", package: "vapor-aws-lambda-runtime"),
-    ]),
-  ]
+    name: "Hello",
+    platforms: [
+        .macOS(.v10_15),
+    ],
+    products: [
+        .executable(name: "Hello", targets: ["Hello"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
+        .package(name: "vapor-aws-lambda-runtime", path: "../.."),
+    ],
+    targets: [
+        .target(name: "Hello", dependencies: [
+            .product(name: "Vapor", package: "vapor"),
+            .product(name: "VaporAWSLambdaRuntime", package: "vapor-aws-lambda-runtime"),
+        ]),
+    ]
 )

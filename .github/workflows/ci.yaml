@@ -5,9 +5,20 @@ on:
     - master
   pull_request:
     branches: 
-    - master
+    - "*"
 
 jobs:
+
+  "sanity-Tests":
+    runs-on: macOS-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install swiftformat
+      run: brew install swiftformat
+    - name: Run sanity
+      run: ./scripts/sanity.sh .
+
   "tuxOS-Tests":
     runs-on: ubuntu-latest
     strategy:
@@ -17,23 +28,18 @@ jobs:
         - swift:5.2-amazonlinux2
     container:
       image: ${{ matrix.images }}
-      volumes:
-      - /workspace:/src
-      options: --workdir /src
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
     - name: Install dependencies 
-      if: matrix.images != 'swiftlang/swift:nightly-amazonlinux2'
+      if: contains(matrix.images, 'amazonlinux2') == false
       run: apt-get update && apt-get install -y curl # required by the codecov action.
     - name: Test
       run: swift test --enable-code-coverage --enable-test-discovery
     - name: Convert coverage files
       run: llvm-cov export -format="lcov" .build/debug/vapor-aws-lambda-runtimePackageTests.xctest -instr-profile .build/debug/codecov/default.profdata > info.lcov
     - name: Upload to codecov.io
-      uses: codecov/codecov-action@v1.0.3
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
+      uses: codecov/codecov-action@v1
 
   "example-Build":
     runs-on: ubuntu-latest
@@ -44,12 +50,14 @@ jobs:
         - VaporTodoLambda
     container:
       image: swift:5.2-amazonlinux2
-      volumes:
-      - /workspace:/src
-      options: --workdir /src/examples/${{ matrix.examples }}
+    defaults:
+      run:
+        working-directory: examples/${{ matrix.examples }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: yum -y install openssl-devel
     - name: Build
       run: swift build -c release
 
@@ -69,6 +77,6 @@ jobs:
     - name: Xcode Tests
       run: |
         swift package generate-xcodeproj
-        xcodebuild -quiet -parallel-testing-enabled YES -scheme vapor-lambda-runtime-Package -enableCodeCoverage YES build test
+        xcodebuild -quiet -parallel-testing-enabled YES -scheme vapor-aws-lambda-runtime-Package -enableCodeCoverage YES build test
     - name: Codecov
       run: bash <(curl -s https://codecov.io/bash) -t ${{secrets.CODECOV_TOKEN}}

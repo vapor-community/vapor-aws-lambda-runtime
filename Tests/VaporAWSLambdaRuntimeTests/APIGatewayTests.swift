@@ -1,12 +1,8 @@
-import XCTest
-import VaporAWSLambdaRuntime
 import AWSLambdaTesting
 import class Foundation.Bundle
+import VaporAWSLambdaRuntime
+import XCTest
 
 final class APIGatewayTests: XCTestCase {
-  
-  func testAPIGatewayHandler() {
-    
-  }
-
+    func testAPIGatewayHandler() {}
 }
