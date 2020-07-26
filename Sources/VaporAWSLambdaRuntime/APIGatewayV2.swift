@@ -58,6 +58,20 @@ extension Vapor.Request {
         req.headers.forEach { key, value in
             nioHeaders.add(name: key, value: value)
         }
+		
+		if let cookies = req.cookies, cookies.count > 0 {
+			var cookiesStr = ""
+			cookies.enumerated().forEach { entry in
+				
+				if entry.offset > 0 {
+					cookiesStr += "; "
+				}
+				
+				cookiesStr += entry.element
+			}
+			
+			nioHeaders.add(name: "Cookie", value: cookiesStr)
+		}
 
         self.init(
             application: application,
@@ -85,7 +99,12 @@ extension APIGateway.V2.Response {
     init(response: Vapor.Response) {
         var headers = [String: String]()
         response.headers.forEach { name, value in
-            headers[name] = value
+			if let current = headers[name] {
+				headers[name] = "\(current),\(value)"
+			}
+			else {
+				headers[name] = value
+			}
         }
 
         if let string = response.body.string {
