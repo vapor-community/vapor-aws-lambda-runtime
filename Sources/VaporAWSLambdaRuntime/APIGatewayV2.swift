@@ -83,17 +83,15 @@ extension APIGateway.V2.Request: Vapor.StorageKey {
 
 extension APIGateway.V2.Response {
     init(response: Vapor.Response) {
-        var headers = [String: [String]]()
+        var headers = [String: String]()
         response.headers.forEach { name, value in
-            var values = headers[name] ?? [String]()
-            values.append(value)
-            headers[name] = values
+            headers[name] = value
         }
 
         if let string = response.body.string {
             self = .init(
                 statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
-                multiValueHeaders: headers,
+                headers: headers,
                 body: string,
                 isBase64Encoded: false
             )
@@ -101,14 +99,14 @@ extension APIGateway.V2.Response {
             let bytes = buffer.readBytes(length: buffer.readableBytes)!
             self = .init(
                 statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
-                multiValueHeaders: headers,
+                headers: headers,
                 body: String(base64Encoding: bytes),
                 isBase64Encoded: true
             )
         } else {
             self = .init(
                 statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
-                multiValueHeaders: headers
+                headers: headers
             )
         }
     }
