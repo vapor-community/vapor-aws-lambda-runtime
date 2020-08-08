@@ -72,11 +72,16 @@ extension Vapor.Request {
 			
 			nioHeaders.add(name: "Cookie", value: cookiesStr)
 		}
+		
+		var url: String = req.rawPath
+		if req.rawQueryString.count > 0 {
+			url += "?\(req.rawQueryString)"
+		}
 
         self.init(
             application: application,
             method: NIOHTTP1.HTTPMethod(rawValue: req.context.http.method.rawValue),
-            url: Vapor.URI(path: req.rawPath),
+            url: Vapor.URI(path: url),
             version: HTTPVersion(major: 1, minor: 1),
             headers: nioHeaders,
             collectedBody: buffer,
