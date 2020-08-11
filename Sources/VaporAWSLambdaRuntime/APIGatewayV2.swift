@@ -20,7 +20,8 @@ struct APIGatewayV2Handler: EventLoopLambdaHandler {
     }
 
     public func handle(context: Lambda.Context, event: APIGateway.V2.Request)
-        -> EventLoopFuture<APIGateway.V2.Response> {
+        -> EventLoopFuture<APIGateway.V2.Response>
+    {
         let vaporRequest: Vapor.Request
         do {
             vaporRequest = try Vapor.Request(req: event, in: context, for: application)
@@ -58,16 +59,16 @@ extension Vapor.Request {
         req.headers.forEach { key, value in
             nioHeaders.add(name: key, value: value)
         }
-		
+
         if let cookies = req.cookies, cookies.count > 0 {
             let cookiesString = cookies.joined(separator: "; ")
             nioHeaders.add(name: "cookie", value: cookiesString)
         }
-		
-		var url: String = req.rawPath
-		if req.rawQueryString.count > 0 {
-			url += "?\(req.rawQueryString)"
-		}
+
+        var url: String = req.rawPath
+        if req.rawQueryString.count > 0 {
+            url += "?\(req.rawQueryString)"
+        }
 
         self.init(
             application: application,
@@ -95,12 +96,11 @@ extension APIGateway.V2.Response {
     init(response: Vapor.Response) {
         var headers = [String: String]()
         response.headers.forEach { name, value in
-			if let current = headers[name] {
-				headers[name] = "\(current),\(value)"
-			}
-			else {
-				headers[name] = value
-			}
+            if let current = headers[name] {
+                headers[name] = "\(current),\(value)"
+            } else {
+                headers[name] = value
+            }
         }
 
         if let string = response.body.string {
