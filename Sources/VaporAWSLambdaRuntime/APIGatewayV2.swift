@@ -61,8 +61,17 @@ extension Vapor.Request {
         }
 
         if let cookies = req.cookies, cookies.count > 0 {
-            let cookiesString = cookies.joined(separator: "; ")
-            nioHeaders.add(name: "cookie", value: cookiesString)
+            var cookiesStr = ""
+            cookies.enumerated().forEach { entry in
+
+                if entry.offset > 0 {
+                    cookiesStr += "; "
+                }
+
+                cookiesStr += entry.element
+            }
+
+            nioHeaders.add(name: "Cookie", value: cookiesStr)
         }
 
         var url: String = req.rawPath
