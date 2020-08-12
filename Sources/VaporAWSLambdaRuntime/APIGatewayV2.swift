@@ -59,16 +59,25 @@ extension Vapor.Request {
         req.headers.forEach { key, value in
             nioHeaders.add(name: key, value: value)
         }
-
-        if let cookies = req.cookies, cookies.count > 0 {
-            let cookiesString = cookies.joined(separator: "; ")
-            nioHeaders.add(name: "cookie", value: cookiesString)
-        }
-
-        var url: String = req.rawPath
-        if req.rawQueryString.count > 0 {
-            url += "?\(req.rawQueryString)"
-        }
+		
+		if let cookies = req.cookies, cookies.count > 0 {
+			var cookiesStr = ""
+			cookies.enumerated().forEach { entry in
+				
+				if entry.offset > 0 {
+					cookiesStr += "; "
+				}
+				
+				cookiesStr += entry.element
+			}
+			
+			nioHeaders.add(name: "Cookie", value: cookiesStr)
+		}
+		
+		var url: String = req.rawPath
+		if req.rawQueryString.count > 0 {
+			url += "?\(req.rawQueryString)"
+		}
 
         self.init(
             application: application,
