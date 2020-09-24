@@ -92,8 +92,6 @@ extension APIGateway.V2.Request: Vapor.StorageKey {
 
 extension APIGateway.V2.Response {
     static func from(response: Vapor.Response, in context: Lambda.Context) -> EventLoopFuture<APIGateway.V2.Response> {
-        // Create the promise
-        let promise = context.eventLoop.makePromise(of: APIGateway.V2.Response.self)
 
         // Create the headers
         var headers = [String: String]()
@@ -142,10 +140,6 @@ extension APIGateway.V2.Response {
                     isBase64Encoded: true
                 )
             }
-            }
         }
-
-        // Return the promise
-        return promise.futureResult
     }
 }
