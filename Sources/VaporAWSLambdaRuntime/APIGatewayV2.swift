@@ -122,35 +122,26 @@ extension APIGateway.V2.Response {
             ))
         } else {
             // See if it is a stream and try to gather the data
-            response.body.collect(on: context.eventLoop).whenComplete { collectResult in
-
-                switch collectResult {
-                case let .failure(error):
-                    promise.fail(error)
-
-                case let .success(buffer):
-
-                    // Was there any content
-                    guard
-                        var buffer = buffer,
-                        let bytes = buffer.readBytes(length: buffer.readableBytes)
-                    else {
-                        promise.succeed(.init(
-                            statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
-                            headers: headers
-                        ))
-
-                        return
-                    }
-
-                    // Done
-                    promise.succeed(.init(
+            return response.body.collect(on: context.eventLoop).map { (buffer) -> APIGateway.V2.Response in
+                // Was there any content
+                guard
+                    var buffer = buffer,
+                    let bytes = buffer.readBytes(length: buffer.readableBytes)
+                else {
+                    return APIGateway.V2.Response(
                         statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
-                        headers: headers,
-                        body: String(base64Encoding: bytes),
-                        isBase64Encoded: true
-                    ))
+                        headers: headers
+                    )
                 }
+
+                // Done
+                return APIGateway.V2.Response(
+                    statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
+                    headers: headers,
+                    body: String(base64Encoding: bytes),
+                    isBase64Encoded: true
+                )
+            }
             }
         }
 
