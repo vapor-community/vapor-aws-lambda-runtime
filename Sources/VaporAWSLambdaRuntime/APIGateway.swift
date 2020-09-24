@@ -20,7 +20,8 @@ struct APIGatewayHandler: EventLoopLambdaHandler {
     }
 
     public func handle(context: Lambda.Context, event: APIGateway.Request)
-        -> EventLoopFuture<APIGateway.Response> {
+        -> EventLoopFuture<APIGateway.Response>
+    {
         let vaporRequest: Vapor.Request
         do {
             vaporRequest = try Vapor.Request(req: event, in: context, for: application)

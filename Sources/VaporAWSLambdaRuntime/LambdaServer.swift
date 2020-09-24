@@ -100,7 +100,8 @@ public class LambdaServer: Server {
     init(application: Application,
          responder: Responder,
          configuration: Configuration,
-         on eventLoopGroup: EventLoopGroup) {
+         on eventLoopGroup: EventLoopGroup)
+    {
         self.application = application
         self.responder = responder
         self.configuration = configuration
