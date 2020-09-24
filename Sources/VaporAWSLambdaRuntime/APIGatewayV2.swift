@@ -92,7 +92,6 @@ extension APIGateway.V2.Request: Vapor.StorageKey {
 
 extension APIGateway.V2.Response {
     static func from(response: Vapor.Response, in context: Lambda.Context) -> EventLoopFuture<APIGateway.V2.Response> {
-
         // Create the headers
         var headers = [String: String]()
         response.headers.forEach { name, value in
