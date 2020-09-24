@@ -114,7 +114,7 @@ extension APIGateway.V2.Response {
                 isBase64Encoded: false
             ))
         } else if let bytes = response.body.data {
-            promise.succeed(.init(
+            return context.eventLoop.makeSucceededFuture(.init(
                 statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
                 headers: headers,
                 body: String(base64Encoding: bytes),
