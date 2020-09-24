@@ -107,7 +107,7 @@ extension APIGateway.V2.Response {
 
         // Can we access the body right away?
         if let string = response.body.string {
-            promise.succeed(.init(
+            return context.eventLoop.makeSucceededFuture(.init(
                 statusCode: AWSLambdaEvents.HTTPResponseStatus(code: response.status.code),
                 headers: headers,
                 body: string,
