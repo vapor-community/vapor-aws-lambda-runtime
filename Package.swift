@@ -16,9 +16,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.13.0")),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", .upToNextMajor(from: "0.2.0")),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", .upToNextMajor(from: "0.3.0")),
         .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
-        .package(url: "https://github.com/fabianfett/swift-base64-kit", .upToNextMajor(from: "0.2.0")),
+        .package(url: "https://github.com/fabianfett/swift-base64-kit", .upToNextMajor(from: "0.3.0")),
     ],
     targets: [
         .target(

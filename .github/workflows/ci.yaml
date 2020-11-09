@@ -9,23 +9,24 @@ on:
 
 jobs:
 
-  "sanity-Tests":
+  "validity-Tests":
     runs-on: macOS-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Install swiftformat
       run: brew install swiftformat
-    - name: Run sanity
-      run: ./scripts/sanity.sh .
+    - name: Run validity
+      run: ./scripts/validity.sh .
 
   "tuxOS-Tests":
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         images:
-        - swift:5.2
         - swift:5.2-amazonlinux2
+        - swift:5.3-amazonlinux2
     container:
       image: ${{ matrix.images }}
     steps:
@@ -49,11 +50,14 @@ jobs:
       matrix:
         examples:
         - Hello
-    container:
-      image: swift:5.2-amazonlinux2
+        images:
+        - swift:5.2-amazonlinux2
+        - swift:5.3-amazonlinux2
     defaults:
       run:
         working-directory: examples/${{ matrix.examples }}
+    container:
+      image: ${{ matrix.images }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -64,13 +68,19 @@ jobs:
 
   "macOS-Tests":
     runs-on: macOS-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode:
+        - Xcode_11.6.app
+        - Xcode_12.2.app
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Show all Xcode versions
       run: ls -an /Applications/ | grep Xcode*
     - name: Change Xcode command line tools
-      run: sudo xcode-select -s /Applications/Xcode_11.5.app/Contents/Developer
+      run: sudo xcode-select -s /Applications/${{ matrix.xcode }}/Contents/Developer
     - name: Xcode Tests
       run: |
         swift package generate-xcodeproj
