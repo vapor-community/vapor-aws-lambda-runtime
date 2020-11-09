@@ -24,12 +24,12 @@ struct APIGatewayV2Handler: EventLoopLambdaHandler {
     {
         let vaporRequest: Vapor.Request
         do {
-            vaporRequest = try Vapor.Request(req: event, in: context, for: application)
+            vaporRequest = try Vapor.Request(req: event, in: context, for: self.application)
         } catch {
             return context.eventLoop.makeFailedFuture(error)
         }
 
-        return responder.respond(to: vaporRequest).flatMap { APIGateway.V2.Response.from(response: $0, in: context) }
+        return self.responder.respond(to: vaporRequest).flatMap { APIGateway.V2.Response.from(response: $0, in: context) }
     }
 }
 

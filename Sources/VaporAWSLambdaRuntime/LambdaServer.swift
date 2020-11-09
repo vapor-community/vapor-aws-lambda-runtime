@@ -4,18 +4,18 @@ import Vapor
 
 // MARK: Application + Lambda
 
-extension Application {
-    public var lambda: Lambda {
+public extension Application {
+    var lambda: Lambda {
         .init(application: self)
     }
 
-    public struct Lambda {
+    struct Lambda {
         public let application: Application
     }
 }
 
-extension Application.Servers.Provider {
-    public static var lambda: Self {
+public extension Application.Servers.Provider {
+    static var lambda: Self {
         .init {
             $0.servers.use { $0.lambda.server.shared }
         }
@@ -24,12 +24,12 @@ extension Application.Servers.Provider {
 
 // MARK: Application + Lambda + Server
 
-extension Application.Lambda {
-    public var server: Server {
+public extension Application.Lambda {
+    var server: Server {
         .init(application: application)
     }
 
-    public struct Server {
+    struct Server {
         let application: Application
 
         public var shared: LambdaServer {
@@ -39,10 +39,10 @@ extension Application.Lambda {
                 let new = LambdaServer(
                     application: application,
                     responder: application.responder.current,
-                    configuration: configuration,
-                    on: application.eventLoopGroup
+                    configuration: self.configuration,
+                    on: self.application.eventLoopGroup
                 )
-                application.storage[Key.self] = new
+                self.application.storage[Key.self] = new
                 return new
             }
         }
@@ -53,8 +53,8 @@ extension Application.Lambda {
 
         public var configuration: LambdaServer.Configuration {
             get {
-                application.storage[ConfigurationKey.self] ?? .init(
-                    logger: application.logger
+                self.application.storage[ConfigurationKey.self] ?? .init(
+                    logger: self.application.logger
                 )
             }
             nonmutating set {
@@ -86,7 +86,7 @@ public class LambdaServer: Server {
         var logger: Logger
 
         init(apiService: RequestSource = .apiGatewayV2, logger: Logger) {
-            requestSource = apiService
+            self.requestSource = apiService
             self.logger = logger
         }
     }
@@ -106,7 +106,7 @@ public class LambdaServer: Server {
         self.responder = responder
         self.configuration = configuration
 
-        eventLoop = eventLoopGroup.next()
+        self.eventLoop = eventLoopGroup.next()
 
         let handler: ByteBufferLambdaHandler
 
@@ -117,8 +117,8 @@ public class LambdaServer: Server {
             handler = APIGatewayV2Handler(application: application, responder: responder)
         }
 
-        lambdaLifecycle = Lambda.Lifecycle(
-            eventLoop: eventLoop,
+        self.lambdaLifecycle = Lambda.Lifecycle(
+            eventLoop: self.eventLoop,
             logger: self.application.logger
         ) {
             $0.eventLoop.makeSucceededFuture(handler)
@@ -126,11 +126,11 @@ public class LambdaServer: Server {
     }
 
     public func start(hostname _: String?, port _: Int?) throws {
-        eventLoop.execute {
+        self.eventLoop.execute {
             _ = self.lambdaLifecycle.start()
         }
 
-        lambdaLifecycle.shutdownFuture.whenComplete { _ in
+        self.lambdaLifecycle.shutdownFuture.whenComplete { _ in
             DispatchQueue(label: "shutdown").async {
                 self.application.shutdown()
             }
@@ -138,7 +138,7 @@ public class LambdaServer: Server {
     }
 
     public var onShutdown: EventLoopFuture<Void> {
-        return lambdaLifecycle.shutdownFuture.map { _ in }
+        self.lambdaLifecycle.shutdownFuture.map { _ in }
     }
 
     public func shutdown() {
