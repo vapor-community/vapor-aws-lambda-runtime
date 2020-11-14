@@ -1,6 +1,6 @@
 import AWSLambdaEvents
 import AWSLambdaRuntimeCore
-import Base64Kit
+import ExtrasBase64
 import NIO
 import NIOHTTP1
 import Vapor
