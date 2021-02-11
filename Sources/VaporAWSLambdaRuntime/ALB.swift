@@ -24,12 +24,14 @@ struct ALBHandler: EventLoopLambdaHandler {
 
     init(application: Application, responder: Responder) {
         self.application = application
+        print("responder: ", responder)
         self.responder = responder
     }
 
     public func handle(context: Lambda.Context, event: ALB.TargetGroupRequest)
         -> EventLoopFuture<ALB.TargetGroupResponse>
     {
+        print("handling here")
         let vaporRequest: Vapor.Request
         do {
             vaporRequest = try Vapor.Request(req: event, in: context, for: self.application)
@@ -75,6 +77,10 @@ extension Vapor.Request {
         if req.queryStringParameters.count > 0 {
             url += "?\(req.queryStringParameters)"
         }
+
+        ctx.logger.debug("The constructed URL is: \(url)")
+        ctx.logger.debug("The incoming request is: ")
+        print("request: ", req)
 
         self.init(
             application: application,
