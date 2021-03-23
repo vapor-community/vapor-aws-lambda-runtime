@@ -85,7 +85,7 @@ public class LambdaServer: Server {
         var requestSource: RequestSource
         var logger: Logger
 
-        init(apiService: RequestSource = .apiGatewayV2, logger: Logger) {
+        public init(apiService: RequestSource = .apiGatewayV2, logger: Logger) {
             self.requestSource = apiService
             self.logger = logger
         }
