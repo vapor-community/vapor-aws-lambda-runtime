@@ -6,3 +6,4 @@ packaged.yaml
 examples/**/bootstrap
 examples/**/lambda.zip
 /Package.resolved
+.swiftpm
