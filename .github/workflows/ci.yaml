@@ -68,7 +68,7 @@ jobs:
       run: swift build -c release
 
   "macOS-Tests":
-    runs-on: macOS-latest
+    runs-on: macos-11
     strategy:
       fail-fast: false
       matrix:
@@ -84,8 +84,10 @@ jobs:
       with:
         xcode-version: ${{ matrix.xcode }}
     - name: Xcode Tests
-      run: |
-        swift test --enable-code-coverage
-        xcrun llvm-cov export -format="lcov" .build/debug/ApodiniPackageTests.xctest/Contents/MacOS/ApodiniPackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+      run: swift test --enable-code-coverage
+    - name: Generate Coverage Report
+      if: matrix.xcode == 'latest'
+      run: xcrun llvm-cov export -format="lcov" .build/debug/vapor-aws-lambda-runtimePackageTests.xctest/Contents/MacOS/vapor-aws-lambda-runtimePackageTests -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
     - name: Upload coverage to Codecov
+      if: matrix.xcode == 'latest'
       uses: codecov/codecov-action@v1

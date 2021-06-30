@@ -119,7 +119,7 @@ extension APIGateway.V2.Response {
             ))
         } else {
             // See if it is a stream and try to gather the data
-            return response.body.collect(on: context.eventLoop).map { (buffer) -> APIGateway.V2.Response in
+            return response.body.collect(on: context.eventLoop).map { buffer -> APIGateway.V2.Response in
                 // Was there any content
                 guard
                     var buffer = buffer,

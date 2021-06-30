@@ -11,7 +11,7 @@ struct Hello: Content {
     let hello: String
 }
 
-app.get("hello") { (_) -> Hello in
+app.get("hello") { _ -> Hello in
     Hello(hello: "world")
 }
 
