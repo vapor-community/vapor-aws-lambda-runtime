@@ -68,14 +68,13 @@ jobs:
       run: swift build -c release
 
   "macOS-Tests":
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
         xcode:
         - 11.7 # Swift 5.2
         - 12.4 # Swift 5.3
-        - 12.5 # Swift 5.4
         - latest
     steps:
     - name: Checkout
