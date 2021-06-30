@@ -72,7 +72,7 @@ extension Vapor.Request {
             on: ctx.eventLoop
         )
 
-        storage[APIGateway.Request] = req
+        storage[APIGateway.Request.self] = req
     }
 }
 
