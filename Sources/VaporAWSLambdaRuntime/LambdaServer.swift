@@ -80,6 +80,7 @@ public class LambdaServer: Server {
             case apiGateway
             case apiGatewayV2
             case applicationLoadBalancer
+            case sqs
         }
 
         var requestSource: RequestSource
@@ -117,6 +118,8 @@ public class LambdaServer: Server {
             handler = APIGatewayV2Handler(application: application, responder: responder)
         case .applicationLoadBalancer:
             handler = ALBHandler(application: application, responder: responder)
+        case .sqs:
+            handler = SQSHandler(application: application, responder: responder)
         }
 
         self.lambdaLifecycle = Lambda.Lifecycle(
