@@ -24,7 +24,6 @@ struct ALBHandler: EventLoopLambdaHandler {
 
     init(application: Application, responder: Responder) {
         self.application = application
-        print("responder: ", responder)
         self.responder = responder
     }
 

@@ -25,7 +25,6 @@ struct SQSHandler: EventLoopLambdaHandler {
 
     init(application: Application, responder: Responder) {
         self.application = application
-        print("responder: ", responder)
         self.responder = responder
     }
 
@@ -50,6 +49,7 @@ extension Vapor.Request {
 
     convenience init(req: SQS.Event, in ctx: Lambda.Context, for application: Application) throws {
         let event = req.records.first!
+        print("incoming events: ", req.records.count)
         /*var buffer: NIO.ByteBuffer?
         switch (req.body, req.isBase64Encoded) {
         case (let .some(string), true):
